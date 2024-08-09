@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data-map xmlns="http://cayenne.apache.org/schema/10/modelMap"
+	 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	 xsi:schemaLocation="http://cayenne.apache.org/schema/10/modelMap https://cayenne.apache.org/schema/10/modelMap.xsd"
+	 project-version="10">
+	<property name="defaultPackage" value="family.data"/>
+	<db-entity name="cm_person">
+		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isGenerated="true" isMandatory="true"/>
+		<db-attribute name="name" type="VARCHAR" length="100"/>
+		<db-attribute name="parent_id" type="INTEGER"/>
+	</db-entity>
+	<obj-entity name="Person" className="family.data.Person" dbEntityName="cm_person">
+		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
+	</obj-entity>
+	<db-relationship name="children" source="cm_person" target="cm_person" toMany="true">
+		<db-attribute-pair source="id" target="parent_id"/>
+	</db-relationship>
+	<db-relationship name="parent" source="cm_person" target="cm_person">
+		<db-attribute-pair source="parent_id" target="id"/>
+	</db-relationship>
+	<obj-relationship name="children" source="Person" target="Person" deleteRule="Deny" db-relationship-path="children"/>
+	<obj-relationship name="parent" source="Person" target="Person" deleteRule="Nullify" db-relationship-path="parent"/>
+</data-map>
