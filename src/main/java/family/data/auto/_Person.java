@@ -6,7 +6,10 @@ import java.io.ObjectOutputStream;
 import java.util.List;
 
 import org.apache.cayenne.BaseDataObject;
-import org.apache.cayenne.exp.Property;
+import org.apache.cayenne.exp.property.EntityProperty;
+import org.apache.cayenne.exp.property.ListProperty;
+import org.apache.cayenne.exp.property.PropertyFactory;
+import org.apache.cayenne.exp.property.StringProperty;
 
 import family.data.Person;
 
@@ -18,17 +21,19 @@ import family.data.Person;
  */
 public abstract class _Person extends BaseDataObject {
 
-    private static final long serialVersionUID = 1L; 
+    private static final long serialVersionUID = 1L;
 
     public static final String ID_PK_COLUMN = "id";
 
-    public static final Property<String> NAME = Property.create("name", String.class);
-    public static final Property<List<Person>> CHILDREN = Property.create("children", List.class);
-    public static final Property<Person> PARENT = Property.create("parent", Person.class);
+    public static final StringProperty<String> NAME = PropertyFactory.createString("name", String.class);
+    public static final ListProperty<Person> CHILDREN = PropertyFactory.createList("children", Person.class);
+    public static final EntityProperty<Person> LAST_ADDED_CHILD = PropertyFactory.createEntity("lastAddedChild", Person.class);
+    public static final EntityProperty<Person> PARENT = PropertyFactory.createEntity("parent", Person.class);
 
     protected String name;
 
     protected Object children;
+    protected Object lastAddedChild;
     protected Object parent;
 
     public void setName(String name) {
@@ -54,6 +59,14 @@ public abstract class _Person extends BaseDataObject {
         return (List<Person>)readProperty("children");
     }
 
+    public void setLastAddedChild(Person lastAddedChild) {
+        setToOneTarget("lastAddedChild", lastAddedChild, true);
+    }
+
+    public Person getLastAddedChild() {
+        return (Person)readProperty("lastAddedChild");
+    }
+
     public void setParent(Person parent) {
         setToOneTarget("parent", parent, true);
     }
@@ -73,6 +86,8 @@ public abstract class _Person extends BaseDataObject {
                 return this.name;
             case "children":
                 return this.children;
+            case "lastAddedChild":
+                return this.lastAddedChild;
             case "parent":
                 return this.parent;
             default:
@@ -92,6 +107,9 @@ public abstract class _Person extends BaseDataObject {
                 break;
             case "children":
                 this.children = val;
+                break;
+            case "lastAddedChild":
+                this.lastAddedChild = val;
                 break;
             case "parent":
                 this.parent = val;
@@ -114,6 +132,7 @@ public abstract class _Person extends BaseDataObject {
         super.writeState(out);
         out.writeObject(this.name);
         out.writeObject(this.children);
+        out.writeObject(this.lastAddedChild);
         out.writeObject(this.parent);
     }
 
@@ -122,6 +141,7 @@ public abstract class _Person extends BaseDataObject {
         super.readState(in);
         this.name = (String)in.readObject();
         this.children = in.readObject();
+        this.lastAddedChild = in.readObject();
         this.parent = in.readObject();
     }
 

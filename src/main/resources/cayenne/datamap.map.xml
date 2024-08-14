@@ -6,6 +6,7 @@
 	<property name="defaultPackage" value="family.data"/>
 	<db-entity name="cm_person">
 		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isGenerated="true" isMandatory="true"/>
+		<db-attribute name="last_added_child_id" type="INTEGER"/>
 		<db-attribute name="name" type="VARCHAR" length="100"/>
 		<db-attribute name="parent_id" type="INTEGER"/>
 	</db-entity>
@@ -15,9 +16,13 @@
 	<db-relationship name="children" source="cm_person" target="cm_person" toMany="true">
 		<db-attribute-pair source="id" target="parent_id"/>
 	</db-relationship>
+	<db-relationship name="lastAddedChild" source="cm_person" target="cm_person">
+		<db-attribute-pair source="last_added_child_id" target="id"/>
+	</db-relationship>
 	<db-relationship name="parent" source="cm_person" target="cm_person">
 		<db-attribute-pair source="parent_id" target="id"/>
 	</db-relationship>
 	<obj-relationship name="children" source="Person" target="Person" deleteRule="Deny" db-relationship-path="children"/>
+	<obj-relationship name="lastAddedChild" source="Person" target="Person" deleteRule="Nullify" db-relationship-path="lastAddedChild"/>
 	<obj-relationship name="parent" source="Person" target="Person" deleteRule="Nullify" db-relationship-path="parent"/>
 </data-map>
