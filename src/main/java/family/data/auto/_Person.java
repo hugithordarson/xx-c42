@@ -11,6 +11,7 @@ import org.apache.cayenne.exp.property.ListProperty;
 import org.apache.cayenne.exp.property.PropertyFactory;
 import org.apache.cayenne.exp.property.StringProperty;
 
+import family.data.Division;
 import family.data.Person;
 
 /**
@@ -27,13 +28,17 @@ public abstract class _Person extends BaseDataObject {
 
     public static final StringProperty<String> NAME = PropertyFactory.createString("name", String.class);
     public static final ListProperty<Person> CHILDREN = PropertyFactory.createList("children", Person.class);
+    public static final EntityProperty<Division> DIVISION = PropertyFactory.createEntity("division", Division.class);
     public static final EntityProperty<Person> LAST_ADDED_CHILD = PropertyFactory.createEntity("lastAddedChild", Person.class);
+    public static final ListProperty<Division> MANAGED_DIVISIONS = PropertyFactory.createList("managed_divisions", Division.class);
     public static final EntityProperty<Person> PARENT = PropertyFactory.createEntity("parent", Person.class);
 
     protected String name;
 
     protected Object children;
+    protected Object division;
     protected Object lastAddedChild;
+    protected Object managed_divisions;
     protected Object parent;
 
     public void setName(String name) {
@@ -59,12 +64,33 @@ public abstract class _Person extends BaseDataObject {
         return (List<Person>)readProperty("children");
     }
 
+    public void setDivision(Division division) {
+        setToOneTarget("division", division, true);
+    }
+
+    public Division getDivision() {
+        return (Division)readProperty("division");
+    }
+
     public void setLastAddedChild(Person lastAddedChild) {
         setToOneTarget("lastAddedChild", lastAddedChild, true);
     }
 
     public Person getLastAddedChild() {
         return (Person)readProperty("lastAddedChild");
+    }
+
+    public void addToManaged_divisions(Division obj) {
+        addToManyTarget("managed_divisions", obj, true);
+    }
+
+    public void removeFromManaged_divisions(Division obj) {
+        removeToManyTarget("managed_divisions", obj, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Division> getManaged_divisions() {
+        return (List<Division>)readProperty("managed_divisions");
     }
 
     public void setParent(Person parent) {
@@ -86,8 +112,12 @@ public abstract class _Person extends BaseDataObject {
                 return this.name;
             case "children":
                 return this.children;
+            case "division":
+                return this.division;
             case "lastAddedChild":
                 return this.lastAddedChild;
+            case "managed_divisions":
+                return this.managed_divisions;
             case "parent":
                 return this.parent;
             default:
@@ -108,8 +138,14 @@ public abstract class _Person extends BaseDataObject {
             case "children":
                 this.children = val;
                 break;
+            case "division":
+                this.division = val;
+                break;
             case "lastAddedChild":
                 this.lastAddedChild = val;
+                break;
+            case "managed_divisions":
+                this.managed_divisions = val;
                 break;
             case "parent":
                 this.parent = val;
@@ -132,7 +168,9 @@ public abstract class _Person extends BaseDataObject {
         super.writeState(out);
         out.writeObject(this.name);
         out.writeObject(this.children);
+        out.writeObject(this.division);
         out.writeObject(this.lastAddedChild);
+        out.writeObject(this.managed_divisions);
         out.writeObject(this.parent);
     }
 
@@ -141,7 +179,9 @@ public abstract class _Person extends BaseDataObject {
         super.readState(in);
         this.name = (String)in.readObject();
         this.children = in.readObject();
+        this.division = in.readObject();
         this.lastAddedChild = in.readObject();
+        this.managed_divisions = in.readObject();
         this.parent = in.readObject();
     }
 
