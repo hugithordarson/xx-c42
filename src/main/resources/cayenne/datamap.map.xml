@@ -16,10 +16,30 @@
 		<db-attribute name="name" type="VARCHAR" length="100"/>
 		<db-attribute name="parent_id" type="INTEGER"/>
 	</db-entity>
+	<db-entity name="person_with_app_generated_uuid">
+		<db-attribute name="id" type="OTHER" isPrimaryKey="true" isMandatory="true"/>
+		<db-attribute name="last_added_child_id" type="OTHER"/>
+		<db-attribute name="name" type="VARCHAR" length="1024"/>
+		<db-attribute name="parent_id" type="OTHER"/>
+	</db-entity>
+	<db-entity name="person_with_db_generated_uuid">
+		<db-attribute name="id" type="OTHER" isPrimaryKey="true" isGenerated="true" isMandatory="true"/>
+		<db-attribute name="last_added_child_id" type="OTHER"/>
+		<db-attribute name="name" type="VARCHAR" length="1024"/>
+		<db-attribute name="parent_id" type="OTHER"/>
+	</db-entity>
 	<obj-entity name="Division" className="family.data.Division" dbEntityName="cm_division">
 		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
 	</obj-entity>
 	<obj-entity name="Person" className="family.data.Person" dbEntityName="cm_person">
+		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
+	</obj-entity>
+	<obj-entity name="PersonWithAppGeneratedUUID" className="family.data.PersonWithAppGeneratedUUID" dbEntityName="person_with_app_generated_uuid">
+		<obj-attribute name="id" type="java.util.UUID" db-attribute-path="id"/>
+		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
+		<post-add method-name="onPostAdd"/>
+	</obj-entity>
+	<obj-entity name="PersonWithDbGeneratedUUID" className="family.data.PersonWithDbGeneratedUUID" dbEntityName="person_with_db_generated_uuid">
 		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
 	</obj-entity>
 	<db-relationship name="employees" source="cm_division" target="cm_person" toMany="true">
@@ -43,6 +63,30 @@
 	<db-relationship name="parent" source="cm_person" target="cm_person">
 		<db-attribute-pair source="parent_id" target="id"/>
 	</db-relationship>
+	<db-relationship name="children" source="person_with_app_generated_uuid" target="person_with_app_generated_uuid" toMany="true">
+		<db-attribute-pair source="id" target="parent_id"/>
+	</db-relationship>
+	<db-relationship name="lastAddedChild" source="person_with_app_generated_uuid" target="person_with_app_generated_uuid">
+		<db-attribute-pair source="last_added_child_id" target="id"/>
+	</db-relationship>
+	<db-relationship name="parent" source="person_with_app_generated_uuid" target="person_with_app_generated_uuid">
+		<db-attribute-pair source="parent_id" target="id"/>
+	</db-relationship>
+	<db-relationship name="untitledRel" source="person_with_app_generated_uuid" target="person_with_app_generated_uuid" toMany="true">
+		<db-attribute-pair source="id" target="last_added_child_id"/>
+	</db-relationship>
+	<db-relationship name="children" source="person_with_db_generated_uuid" target="person_with_db_generated_uuid" toMany="true">
+		<db-attribute-pair source="id" target="parent_id"/>
+	</db-relationship>
+	<db-relationship name="lastAddedChild" source="person_with_db_generated_uuid" target="person_with_db_generated_uuid">
+		<db-attribute-pair source="last_added_child_id" target="id"/>
+	</db-relationship>
+	<db-relationship name="parent" source="person_with_db_generated_uuid" target="person_with_db_generated_uuid">
+		<db-attribute-pair source="parent_id" target="id"/>
+	</db-relationship>
+	<db-relationship name="untitledRel" source="person_with_db_generated_uuid" target="person_with_db_generated_uuid" toMany="true">
+		<db-attribute-pair source="id" target="last_added_child_id"/>
+	</db-relationship>
 	<obj-relationship name="employees" source="Division" target="Person" deleteRule="Deny" db-relationship-path="employees"/>
 	<obj-relationship name="manager" source="Division" target="Person" deleteRule="Nullify" db-relationship-path="manager"/>
 	<obj-relationship name="children" source="Person" target="Person" deleteRule="Deny" db-relationship-path="children"/>
@@ -50,4 +94,10 @@
 	<obj-relationship name="lastAddedChild" source="Person" target="Person" deleteRule="Nullify" db-relationship-path="lastAddedChild"/>
 	<obj-relationship name="managed_divisions" source="Person" target="Division" deleteRule="Deny" db-relationship-path="managed_divisions"/>
 	<obj-relationship name="parent" source="Person" target="Person" deleteRule="Nullify" db-relationship-path="parent"/>
+	<obj-relationship name="children" source="PersonWithAppGeneratedUUID" target="PersonWithAppGeneratedUUID" deleteRule="Deny" db-relationship-path="children"/>
+	<obj-relationship name="lastAddedChild" source="PersonWithAppGeneratedUUID" target="PersonWithAppGeneratedUUID" deleteRule="Nullify" db-relationship-path="lastAddedChild"/>
+	<obj-relationship name="parent" source="PersonWithAppGeneratedUUID" target="PersonWithAppGeneratedUUID" deleteRule="Nullify" db-relationship-path="parent"/>
+	<obj-relationship name="children" source="PersonWithDbGeneratedUUID" target="PersonWithDbGeneratedUUID" deleteRule="Deny" db-relationship-path="children"/>
+	<obj-relationship name="lastAddedChild" source="PersonWithDbGeneratedUUID" target="PersonWithDbGeneratedUUID" deleteRule="Nullify" db-relationship-path="lastAddedChild"/>
+	<obj-relationship name="parent" source="PersonWithDbGeneratedUUID" target="PersonWithDbGeneratedUUID" deleteRule="Nullify" db-relationship-path="parent"/>
 </data-map>
